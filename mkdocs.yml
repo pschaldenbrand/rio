@@ -1,0 +1,123 @@
+site_name: RIO Docs
+site_description: A real-time control library for cross-embodiment robot manipulation
+site_author: RIO Developers
+repo_url: https://github.com/cmubig/rio
+repo_name: cmubig/rio
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.path
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - toc.follow
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/cmubig/rio
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
+plugins:
+  - search
+  - multirepo
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            separate_signature: true
+            merge_init_into_class: true
+            docstring_section_style: table
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - def_list
+  - toc:
+      permalink: true
+
+nav:
+  - RIO: index.md
+
+  - Quick Start: quickstart.md
+
+  - Tutorial:
+    - tutorial/index.md
+    - Setup:
+      - Station Configuration: tutorial/station_cfg.md
+    - Collect Data: 
+      - Collect Demonstrations: tutorial/data-collection.md
+      - Visualize Data: tutorial/rerun.md
+    - Convert Data:
+      - Convert to DROID: tutorial/data-export.md
+    - Policy Training:
+      - Setup: tutorial/pi0_setup.md
+      - Pi0.5 DROID Fine-tuning: tutorial/pi0_droid_finetuning.md
+    - Deploy:
+      - Policy Inference: tutorial/deploy.md
+
+  # - Hardware: '!import git@github.com:cmubig/rio-hw.git?branch=main&docs_dir=docs/' # TODO: fix in rio-hw
+
+  - Reference:
+    - Ubuntu RT Setup: reference/ubuntu.md
+
+  - Contributing:
+    - Guide: CONTRIBUTING.md
+    - Known Issues: known_issues.md

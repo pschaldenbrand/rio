@@ -1,0 +1,33 @@
+/* ── Hero section tweaks ── */
+.rio-hero h2 {
+  background: linear-gradient(135deg, var(--md-primary-fg-color), #7c4dff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Feature cards hover ── */
+.rio-grid .card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.rio-grid .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Sticky tabs polish ── */
+.md-tabs {
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* ── Code block refinement ── */
+.md-typeset code {
+  font-size: 0.82em;
+}
+
+/* ── "Next steps" table cleanup ── */
+.md-typeset table:not([class]) th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}

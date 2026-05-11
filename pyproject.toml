@@ -1,0 +1,118 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rio"
+authors = [
+    { name = "rio developers", email = "etaoxing@users.noreply.github.com" },
+]
+
+description = "A real-time control library for cross-embodiment robot manipulation"
+license = "Apache-2.0"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dynamic = ["version", "readme"]
+requires-python = ">=3.10"
+
+#TODO: change git reference to main.
+dependencies = [
+    "loguru>=0.7.3",
+    "rio_hw[all] @ git+ssh://git@github.com/robot-i-o/rio-hw.git@main",
+    "robodm>=0.1.0",
+    "av<=13.1.0",    # required by robodm for proper encoding/decoding
+]
+
+[project.scripts]
+rio-list-stations = "rio._scripts.list_available:list_stations"
+rio-list-robots = "rio._scripts.list_available:list_robots"
+rio-list-cameras = "rio._scripts.list_available:list_cameras"
+rio-list-interfaces = "rio._scripts.list_available:list_interfaces"
+
+[project.optional-dependencies]
+visualizers = ["rerun-sdk", "mujoco", "robot_descriptions", "rerun-loader-mjcf"]
+
+[dependency-groups]
+rlds = ["tensorflow>=2.11.0", "tensorflow-datasets>=4.9.0"]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocstrings[python]",
+    "mkdocs-autorefs",
+    "mkdocs-multirepo-plugin @ git+https://github.com/etaoxing/mkdocs-multirepo-plugin.git@fb846d34672fd7f86ad5ba680566817a9ea7fb25",
+]
+
+
+# This removes version constraints from transitive dependencies
+[tool.uv]
+override-dependencies = ["numpy", "rerun-sdk", "av<=13.1.0"]
+
+[tool.setuptools.packages.find]
+include = ["rio*", "examples*"]
+
+[tool.setuptools.dynamic]
+version = { file = ["VERSION"] }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.ruff]
+cache-dir = ".cache/ruff"
+line-length = 128
+indent-width = 4
+extend-exclude = ["third_party/"]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "I",   # isort
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "NPY", # NumPy-specific rules
+    "PLC", # pylint convention
+    "PLE", # pylint error
+    "PLW", # pylint warning
+    "UP",  # pyupgrade
+    "RUF", # ruff-specific rules
+]
+ignore = [
+    "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+    "E731",   # Do not assign a lambda expression, use a def
+    "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+    "E731",   # Do not assign a lambda expression, use a def
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"examples/*" = ["PLC0415"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.pytest.ini_options]
+python_files = "test_*.py"
+testpaths = ["rio/_tests"]
+
+[tool.typos]
+files.extend-exclude = ["*.urdf", "*.usd", "*.usda", "*.mjcf"]
+
+[tool.typos.default.extend-words]
+UDID = "UDID"
+
+[tool.typos.default.extend-identifiers]
+SharedNDArray = "SharedNDArray"
