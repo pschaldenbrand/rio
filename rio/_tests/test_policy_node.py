@@ -84,6 +84,8 @@ def make_dummy_observation(test_cfg):
     return obs
 
 
+@pytest.mark.gpu
+@pytest.mark.integration
 @pytest.mark.parametrize("policy_name", POLICIES_TO_TEST)
 def test_policy_interface(policy_name, policy_cfg, policy_interface_cfg, test_cfg, make_dummy_observation):
     # 1. Instantiate policy wrapper

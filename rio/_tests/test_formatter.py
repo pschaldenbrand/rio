@@ -74,6 +74,7 @@ def lerobot_output_path(temp_dir):
     return str(Path(temp_dir) / "lerobot_dataset")
 
 
+@pytest.mark.integration
 class TestLeRobotFormatter:
     """Tests for LeRobotFormatter class."""
 

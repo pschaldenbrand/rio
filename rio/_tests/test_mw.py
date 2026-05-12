@@ -8,10 +8,13 @@ import unittest
 from enum import Enum, auto
 
 import numpy as np
+import pytest
 from loguru import logger
 from rio_hw import time
 from rio_hw.middleware import ClientFactory, ServerFactory, ServerManager
 from rio_hw.node import Node
+
+pytestmark = pytest.mark.integration
 
 
 class RequestType(Enum):

@@ -107,6 +107,12 @@ docstring-code-format = true
 [tool.pytest.ini_options]
 python_files = "test_*.py"
 testpaths = ["rio/_tests"]
+markers = [
+    "unit: pure logic, no IPC, no hardware",
+    "integration: requires subprocess/IPC, no physical hardware",
+    "hardware: requires physical camera/robot/teleop device",
+    "gpu: requires CUDA",
+]
 
 [tool.typos]
 files.extend-exclude = ["*.urdf", "*.usd", "*.usda", "*.mjcf"]

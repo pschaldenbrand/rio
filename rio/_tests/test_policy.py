@@ -58,6 +58,7 @@ def make_dummy_observation(test_cfg):
     return obs
 
 
+@pytest.mark.gpu
 @pytest.mark.parametrize("policy_name", POLICIES_TO_TEST)
 def test_simple_inference(policy_name, policy_cfg, make_dummy_observation):
     # Build policy
