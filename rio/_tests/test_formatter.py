@@ -15,6 +15,8 @@ import robodm
 
 from rio.data import LeRobotFormatter
 
+lerobot = pytest.importorskip("lerobot", reason="lerobot not installed")
+
 rng = np.random.default_rng()
 
 
@@ -74,6 +76,7 @@ def lerobot_output_path(temp_dir):
     return str(Path(temp_dir) / "lerobot_dataset")
 
 
+@pytest.mark.integration
 class TestLeRobotFormatter:
     """Tests for LeRobotFormatter class."""
 

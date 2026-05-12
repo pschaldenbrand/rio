@@ -144,6 +144,7 @@ def middleware():
     yield mw
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize(
     "freq,duration,description",
     [

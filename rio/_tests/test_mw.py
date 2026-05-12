@@ -8,10 +8,13 @@ import unittest
 from enum import Enum, auto
 
 import numpy as np
+import pytest
 from loguru import logger
 from rio_hw import time
 from rio_hw.middleware import ClientFactory, ServerFactory, ServerManager
 from rio_hw.node import Node
+
+pytestmark = pytest.mark.integration
 
 
 class RequestType(Enum):
@@ -66,7 +69,6 @@ class PayloadTest(Node):
         try:
             rate = time.Rate(self.freq)
             self.req_ready_event.set()
-            not_pub_ready = True
             # Clear ring buffer before starting
             # self.ring_buffer.clear()
 

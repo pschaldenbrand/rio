@@ -25,9 +25,10 @@ except ImportError:
 
 
 # Skip all tests if RLDS is not available
-pytestmark = pytest.mark.skipif(
-    not RLDS_AVAILABLE, reason="RLDS dependencies not installed. Install with: pip install rio[rlds]"
-)
+pytestmark = [
+    pytest.mark.skipif(not RLDS_AVAILABLE, reason="RLDS dependencies not installed. Install with: pip install rio[rlds]"),
+    pytest.mark.integration,
+]
 
 
 @pytest.fixture
