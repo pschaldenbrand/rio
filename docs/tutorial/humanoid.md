@@ -48,6 +48,7 @@ Run tethered full-body humanoid control through a re-implementation of [GEAR-SON
     or
 
         sudo dpkg -i XRoboToolkit-PC-Service_1.0.0_ubuntu_24.04_amd64.deb
+- Open the XRoboToolkit-PC-Service application
 - Install Python bindings for XRobotToolkit from GEAR-SONIC
 
         export CMAKE_PREFIX_PATH="$(python -m pybind 11 --cmakedir)"
@@ -76,6 +77,7 @@ Run tethered full-body humanoid control through a re-implementation of [GEAR-SON
     - Set **Mode** to **Full-body**
     - Next to **Status:**, press the **Connect** button
     - Text should appear next to **Status:** that says **WORKING*
+        - If the connection failed, double check that the XRoboToolkit PC service is running
     - Under **Data & Control** enable **Send**
 
 ### Setup Unitree G1 Interface
@@ -96,15 +98,27 @@ Run tethered full-body humanoid control through a re-implementation of [GEAR-SON
         uv pip install unitree_sdk2 --no-index --find-links "https://github.com/amazon-far/unitree_sdk2/releases/expanded_assets/0.1.3"
         python -c "import unitree_interface.unitree_interface as m; print(m.__file__)"
 
-### Run the script
+### Run the script in simulation
+- Run
+
+        STATION=G1Station python -m examples.teleop_humanoid --sim
+- Press **Enter** to engage the controller
+- Move to mirror the standing position of the robot, then press **B** on the right Pico controller to start full-body tracking
+- Press **A** at any time to pause tracking, and **B** to resume
+- Press **X** on the left controller at any time to kill the process 
+
+### Run the script in real
 - Use the G1 controller to enter development mode by simultaneously pressing and holding **R1** and **L1**
 - Launch the **XRoboToolkit PC** application
 - Lift the **Unitree G1** to standing position
 - Put on the **Pico 4 Ultra** again and recalibrate/reconnect.
-- Run the script, wait for the policies to load, then press **Enter** to go to initial position.
+- Run
+
+        STATION=G1Station python -m examples.teleop_humanoid
+- Wait for the policies to load, then press **Enter** to go to initial position.
 - Lower the gantry until the robot leans slightly forward
 - Press **Enter** to engage the controller
 - Move to mirror the standing position of the robot, then press **B** on the right Pico controller to start full-body tracking
 - Press **A** at any time to pause tracking, and **B** to resume
-- Press **X** on the left controller at any time to kill the process
+- Press **X** on the left controller at any time to kill the process. 
 
