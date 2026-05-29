@@ -312,7 +312,9 @@ class GearSonic(Node):
                         }
                     )
                     if not heading_initialized:
+                        state_buffer.buffers["smpl_joints"][:] = smpl_joints_local_np
                         state_buffer.buffers["smpl_root_quat_xyzw"][:] = ref_root_quat_xyzw
+                        state_buffer.buffers["wrist_joints"][:] = wrist_joints
                 else:
                     ref_root_quat_xyzw = np.array(data["root_quat"], dtype=np.float32)[0][[1, 2, 3, 0]]
                     ref_fi = data["ref_fi"]
