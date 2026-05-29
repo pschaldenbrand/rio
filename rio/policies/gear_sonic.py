@@ -226,6 +226,7 @@ class GearSonic(Node):
         heading_initialized = False
         heading_delta_rot = None
 
+        encoder_mode = None
         dt = 1.0 / self.freq
         t_start = None
         it = 0
@@ -257,6 +258,9 @@ class GearSonic(Node):
                     r = st.Rotation.from_quat(quat_xyzw)
                     gravity_dir = r.inv().apply(np.array([0.0, 0.0, -1.0])).astype(np.float32)
 
+                    # reinitialize if encoder mode change
+                    if data["encoder_mode"] != encoder_mode:
+                        heading_initialized = False
                     encoder_mode = data["encoder_mode"]
 
                 except queue.Empty:
@@ -284,8 +288,8 @@ class GearSonic(Node):
                     if GEAR_SONIC_IMPORT_ERROR is not None:
                         raise ImportError("gear_sonic is required for raw body tracking mode.") from GEAR_SONIC_IMPORT_ERROR
 
-                    positions = data["raw_body_pos"]
-                    global_quats = data["raw_body_quat"]
+                    positions = np.array(data["raw_body_pos"])
+                    global_quats = np.array(data["raw_body_quat"])
 
                     body_poses_np = np.zeros((24, 7), dtype=np.float32)
                     body_poses_np[:, :3] = positions
@@ -307,13 +311,15 @@ class GearSonic(Node):
                             "wrist_joints": wrist_joints,
                         }
                     )
+                    if not heading_initialized:
+                        state_buffer.buffers["smpl_root_quat_xyzw"][:] = ref_root_quat_xyzw
                 else:
                     ref_root_quat_xyzw = np.array(data["root_quat"], dtype=np.float32)[0][[1, 2, 3, 0]]
                     ref_fi = data["ref_fi"]
 
                 state_buffer.append(state_dict)
 
-                if not heading_initialized or (encoder_mode == "joint" and ref_fi == 0):
+                if not heading_initialized:
                     # Calculate yaw-only delta between state and reference base rotation
                     base_rot = st.Rotation.from_quat(quat_xyzw)
                     base_x, base_y, _ = base_rot.apply([1.0, 0.0, 0.0])
@@ -324,7 +330,8 @@ class GearSonic(Node):
                     ref_yaw = np.arctan2(ref_y, ref_x)
 
                     heading_delta_rot = st.Rotation.from_euler("z", base_yaw - ref_yaw)
-                    heading_initialized = True
+                    if encoder_mode == "smpl":
+                        heading_initialized = True
 
                 if encoder_mode == "joint":
                     encoder_obs = self._build_encoder_input_joint(
