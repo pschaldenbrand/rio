@@ -94,7 +94,7 @@ Everything is wired together through a **station config** which is a Python data
     
 ```bash
 # clone the repo
-git clone git@github.com:cmubig/rio.git
+git clone git@github.com:robot-i-o/rio.git
 cd rio
 
 # install openpi (third-party policy server)
