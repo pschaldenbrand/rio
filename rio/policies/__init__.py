@@ -3,7 +3,13 @@
 
 from loguru import logger
 
-from .gear_sonic import GearSonicClient, GearSonicServer
+try:
+    from .gear_sonic import GearSonicClient, GearSonicServer
+except ImportError:
+    logger.debug("GearSonic not available (missing torch or gear_sonic package)")
+    GearSonicClient = None
+    GearSonicServer = None
+
 from .gear_sonic_planner import GearSonicPlannerClient, GearSonicPlannerServer
 from .policy_interface import PolicyInterfaceClient, PolicyInterfaceServer
 
