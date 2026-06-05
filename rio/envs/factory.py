@@ -137,12 +137,8 @@ def instantiate_station_cfg(args, **kwargs) -> tuple[dict, dict, dict]:
             else:
                 cfg_dict = cfg
             package = "rio_hw"
-            if hasattr(args, module_override_key):
-                module = getattr(args, module_override_key)
-                package = "rio"
-            elif module_override_key in kwargs:
+            if module_override_key in kwargs:
                 module = kwargs[module_override_key]
-                package = "rio"
             elif field_name.startswith("teleop"):
                 module = "interfaces"
             elif field_name == "visualizer":
