@@ -39,23 +39,23 @@ def convert_to_lerobot(
     # - actions: Delta joint positions (7D)
 
     # LIBERO mapping
-    # feature_mapping = {
-    #     "observation/cameras/camera1/rgb": "image",
-    #     "observation/cameras/camera2/rgb": "wrist_image",
-    #     "observation/proprio": "state",
-    #     "action": "actions",
-    # }
+    feature_mapping = {
+        "observation/cameras/camera1/rgb": "image",
+        "observation/cameras/camera2/rgb": "wrist_image",
+        "observation/proprio": "state",
+        "action": "actions",
+    }
 
     # DROID mapping
-    feature_mapping = {
-        "observation/cameras/camera1/rgb": "exterior_image_1_left",
-        "observation/cameras/camera2/rgb": "exterior_image_2_left",
-        "observation/cameras/camera3/rgb": "wrist_image_left",
-        "observation/proprio_joints": "joint_position",
-        "observation/gripper_position": "gripper_position",
-        "action": "actions",
-        "prompt": "prompt",
-    }
+    # feature_mapping = {
+    #     "observation/cameras/camera1/rgb": "exterior_image_1_left",
+    #     "observation/cameras/camera2/rgb": "exterior_image_2_left",
+    #     "observation/cameras/camera3/rgb": "wrist_image_left",
+    #     "observation/proprio_joints": "joint_position",
+    #     "observation/gripper_position": "gripper_position",
+    #     "action": "actions",
+    #     "prompt": "prompt",
+    # }
 
     formatter = LeRobotFormatter(
         robodm_path=robodm_path,

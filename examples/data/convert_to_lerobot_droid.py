@@ -131,23 +131,34 @@ def convert_to_lerobot(args: "Args"):
     class DroidLeRobotFormatter(LeRobotFormatter):
         """Compute joint velocities from positions and zero-pad gripper actions."""
 
+        # def _enhance_trajectory_data(self, traj_data: dict) -> dict:
+        #     traj_data = super()._enhance_trajectory_data(traj_data)
+        #     joint_positions = traj_data["observation/proprio_joints"]  # (N, D)
+
+        #     gripper_positions = np.zeros_like(traj_data["action"][:, -1:])  # (N, 1), zeroed
+
+        #     timesteps = traj_data["timestep"]  # (N,)
+        #     dt = np.clip(timesteps[1:] - timesteps[:-1], a_min=1e-4, a_max=None)  # (N-1,)
+
+        #     joint_velocities = (joint_positions[1:, :num_joints] - joint_positions[:-1, :num_joints]) / dt[:, None]
+        #     joint_velocities = np.concatenate(
+        #         [np.zeros((1, num_joints), dtype=np.float32), joint_velocities], axis=0
+        #     )  # (N, num_joints)
+
+        #     traj_data["action"] = np.concatenate([joint_velocities, gripper_positions], axis=-1).astype(
+        #         np.float32
+        #     )  # (N, action_dim)
+        #     return traj_data
+
+
         def _enhance_trajectory_data(self, traj_data: dict) -> dict:
             traj_data = super()._enhance_trajectory_data(traj_data)
-            joint_positions = traj_data["observation/proprio_joints"]  # (N, D)
+            raw_actions = traj_data["action"]  # (N, num_joints + 1): absolute joint targets + gripper
 
-            gripper_positions = np.zeros_like(traj_data["action"][:, -1:])  # (N, 1), zeroed
+            joint_actions = raw_actions[:, :num_joints].astype(np.float32)   # (N, num_joints)
+            gripper_actions = raw_actions[:, -1:].astype(np.float32)          # (N, 1), absolute
 
-            timesteps = traj_data["timestep"]  # (N,)
-            dt = np.clip(timesteps[1:] - timesteps[:-1], a_min=1e-4, a_max=None)  # (N-1,)
-
-            joint_velocities = (joint_positions[1:, :num_joints] - joint_positions[:-1, :num_joints]) / dt[:, None]
-            joint_velocities = np.concatenate(
-                [np.zeros((1, num_joints), dtype=np.float32), joint_velocities], axis=0
-            )  # (N, num_joints)
-
-            traj_data["action"] = np.concatenate([joint_velocities, gripper_positions], axis=-1).astype(
-                np.float32
-            )  # (N, action_dim)
+            traj_data["action"] = np.concatenate([joint_actions, gripper_actions], axis=-1)  # (N, action_dim)
             return traj_data
 
     formatter = DroidLeRobotFormatter(
