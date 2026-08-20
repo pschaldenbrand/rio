@@ -52,7 +52,12 @@ docs = [
 
 # This removes version constraints from transitive dependencies
 [tool.uv]
-override-dependencies = ["numpy", "rerun-sdk", "av<=13.1.0"]
+# ruckig<0.19 is sdist-only and its pinned scikit-build-core no longer builds.
+override-dependencies = ["numpy", "rerun-sdk", "av<=13.1.0", "ruckig>=0.19"]
+
+# Local checkout, so the Kassow arm node and the _kord_bridge build tree stay in sync.
+[tool.uv.sources]
+rio_hw = { path = "../rio-hw", editable = true }
 
 [tool.setuptools.packages.find]
 include = ["rio*", "examples*"]

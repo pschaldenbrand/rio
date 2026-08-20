@@ -1,6 +1,7 @@
 import multiprocessing as mp
 from contextlib import nullcontext
 
+import numpy as np
 import tyro
 from loguru import logger
 from rio_hw import time
@@ -8,6 +9,10 @@ from rio_hw.middleware import ServerManager
 
 from rio.envs.env import make_env
 from rio.envs.poll import Interface, TeleopMode
+
+# Spacemouse / gamepad axes are roughly in [-1, 1]. Below this, treat the device
+# as released so the target does not keep leading the measured pose.
+TELEOP_IDLE_EPS = 0.05
 
 
 def teleop_eef(args, env, teleop, visualizer=None):
@@ -53,12 +58,17 @@ def teleop_eef(args, env, teleop, visualizer=None):
             # Build arm command
             if env.robot.arm:
                 t_target = t_cmd_target + args.arm_latency
-                arm_target_pose = env.robot.make_teleop_eef_cmd(
-                    freq, teleop_mode, delta_tcp_pose, arm_target_pose, max_pos_speed, max_rot_speed
-                )
-                action = env.robot.build_action(arm_target_pose, gripper_cmd=last_gripper_cmd)
-
-                env.move(action, t_cmd_target=t_target)
+                if np.max(np.abs(delta_tcp_pose)) < TELEOP_IDLE_EPS:
+                    # Hands off: drop any lead and do not stream, so the arm
+                    # stops instead of catching up / low-pass coasting.
+                    arm_target_pose = env.robot.arm.get_state()["eef_pose"].copy()
+                    action = env.robot.build_action(arm_target_pose, gripper_cmd=last_gripper_cmd)
+                else:
+                    arm_target_pose = env.robot.make_teleop_eef_cmd(
+                        freq, teleop_mode, delta_tcp_pose, arm_target_pose, max_pos_speed, max_rot_speed
+                    )
+                    action = env.robot.build_action(arm_target_pose, gripper_cmd=last_gripper_cmd)
+                    env.move(action, t_cmd_target=t_target)
             step = env.get_state(action=action)
 
             if env.recorder:
