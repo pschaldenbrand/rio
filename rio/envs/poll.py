@@ -16,7 +16,11 @@ class TeleopMode(Enum):
 class Interface:
     @staticmethod
     def poll(_teleop, teleop, t_sample, t_last_mode_change, teleop_mode):
-        poll_teleop_fn = getattr(Interface, f"poll_{_teleop.lower()}")
+        name = _teleop.lower()
+        # Terminal-friendly alias: same key map as Keyboard, stdin via sshkeyboard.
+        if name == "sshkeyboard":
+            name = "keyboard"
+        poll_teleop_fn = getattr(Interface, f"poll_{name}")
         return poll_teleop_fn(teleop, t_sample, t_last_mode_change, teleop_mode)
 
     @staticmethod
