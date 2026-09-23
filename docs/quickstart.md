@@ -78,6 +78,39 @@ STATION=SO100Station      uv run -m examples.teleop_leader_follower
 
 On startup the script checks that the leader joints are aligned with the follower — fix any misaligned joints before confirming.
 
+### Absolute pose tracking
+
+Use this when your input device reports an **absolute pose** rather than deltas (Vive tracker).
+Motion is retargeted relative to a clutch, so nothing needs calibrating between the
+tracker frame and the robot. The same loop drives a dexterous hand from a glove.
+
+```bash
+STATION=Ur5eViveInspireStation uv run -m examples.teleop_vive_hand
+```
+
+On the first run it asks you to sweep a hand along two robot axes. That solves for the yaw
+between SteamVR's world frame and the robot base, which is the only frame unknown once
+gravity has fixed the vertical axis. The answer is saved to `vive_yaw_cal.json` and reused;
+pass `--calibrate-yaw` to redo it. Calibrate standing where you will actually work, since
+the correct angle depends on which way you face.
+
+Press `c` to engage the clutch, which snapshots the tracker pose and the current TCP pose
+together; wrist motion is then applied relative to that pair. Press `c` again to release and
+re-center. `o` toggles wrist orientation tracking, and `n` / `s` start and save a recording.
+
+The arm moves only while the clutch is engaged, and releases automatically if tracking is
+lost or if the command runs ahead of the measured TCP. See
+[Vive Tracker](https://github.com/robot-i-o/rio-hw/blob/main/docs/interfaces/vive_tracker.md)
+for SteamVR setup.
+
+Bring this up in stages, since it drives a real arm:
+
+1. Tracker alone — confirm `pose_valid` stays at 1 as you move through the workspace.
+2. Hand alone — `STATION=ManusInspireStation uv run -m examples.teleop_leader_follower`.
+3. Arm with a low gain — add `--pos-scale 0.25 --max-pos-speed 0.05`, engage briefly, confirm
+   the direction of every axis before raising the limits.
+4. Full rig at the station defaults.
+
 ---
 
 ## Example stations at a glance
@@ -87,6 +120,7 @@ On startup the script checks that the leader joints are aligned with the followe
 | `Xarm7EEFStation` | `examples/cfg/xarm_eef.py` | EEF (Spacemouse) | `teleop_eef` |
 | `Xarm7GelloStation` | `examples/cfg/xarm_gello.py` | Leader-follower (Gello) | `teleop_leader_follower` |
 | `SO100Station` | `examples/cfg/so100.py` | Leader-follower (SO100) | `teleop_leader_follower` |
+| `Ur5eViveInspireStation` | `examples/cfg/ur_vive_inspire.py` | Absolute pose (Vive) + hand (Manus) | `teleop_vive_hand` |
 | `BimanualSO100Station` | `examples/cfg/bimanual_so100.py` | Leader-follower bimanual | `teleop_leader_follower` |
 | `G1Station` | `examples/cfg/humanoid.py` | Humanoid whole-body (XRobotoolkit) | `teleop_humanoid` |
 

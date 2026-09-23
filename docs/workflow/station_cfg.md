@@ -75,6 +75,7 @@ The factory uses a **field + field_cfg** naming convention; the **module** is
 |-------|--------------|--------|
 | `arm`, `arm1`, `arm2` | `arm_cfg`, `arm1_cfg`, `arm2_cfg` | `robots` |
 | `gripper`, `gripper1` | `gripper_cfg`, `gripper1_cfg` | `robots` |
+| `hand` | `hand_cfg` | `robots` |
 | `visualizer` | `visualizer_cfg` | `visualization` |
 | `recorder` | `recorder_cfg` | `data` |
 | `teleop_*` | `teleop_*_cfg` | `interfaces` |
@@ -84,6 +85,11 @@ The factory uses a **field + field_cfg** naming convention; the **module** is
 
 - Field value = class name as string (e.g., `"XarmArm"`, `"Rerun"`) or `None` to disable
 - Config = dataclass with parameters passed to the class constructor
+
+A `hand` is a dexterous end-effector commanded through `moveJ`, separate from the `gripper`
+channel. When a station declares one, `SingleArm` appends its DOF to the action vector after
+the gripper slot, so a `TASK_POS` arm with a 6-DOF hand produces a 13-wide action:
+6 arm (position + axis-angle), 1 gripper, 6 hand. See `Ur5eViveInspireStation`.
 
 ## Cameras
 Cameras use a dict with a special `Camera` helper class:
