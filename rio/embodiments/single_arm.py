@@ -87,15 +87,29 @@ class SingleArm(BaseEmbodiment):
         arm_cmd = action[: self.arm_dim]
         gripper1_cmd = action[self.arm_dim]
 
+        # Anything past the gripper slot is dexterous hand DOF, which only a
+        # station that wires up a hand appends.
+        hand_cmd = None
+        if self.hand is not None and len(action) > self.arm_dim + 1:
+            hand_cmd = np.asarray(action[self.arm_dim + 1 :])
+
         return {
             "arm_cmd": arm_cmd,
             "gripper_cmd": gripper1_cmd,
-            "hand_cmd": None,
+            "hand_cmd": hand_cmd,
         }
 
-    def build_action(self, arm_cmd: np.ndarray, gripper_cmd: np.ndarray | None = None, **kwargs) -> np.ndarray:
-        arm_cmd = np.concatenate([arm_cmd, [gripper_cmd]])
-        return arm_cmd
+    def build_action(
+        self,
+        arm_cmd: np.ndarray,
+        gripper_cmd: np.ndarray | None = None,
+        hand_cmd: np.ndarray | None = None,
+        **kwargs,
+    ) -> np.ndarray:
+        action = np.concatenate([arm_cmd, [gripper_cmd]])
+        if hand_cmd is not None:
+            action = np.concatenate([action, np.ravel(hand_cmd)])
+        return action
 
     def moveL(self, arm_cmd: np.ndarray, t_cmd_target: float, convert_to_aa: bool = False):
         if convert_to_aa:  # If needed, convert euler angles to axis-angle
@@ -135,11 +149,14 @@ class SingleArm(BaseEmbodiment):
         default_proprio = eef_pose if self.action_space == "EEF_POSE" else joint_q
         default_proprio = np.concatenate([default_proprio, [gripper_pos]])
 
+        hand_joints = robot_state["hand"].get("joint_q") if "hand" in robot_state else None
+
         obs = SingleArmObs(
             proprio=default_proprio,
             proprio_eef=eef_pose,
             proprio_joints=joint_q,
             gripper_position=gripper_pos,
+            hand_joints=hand_joints,
             cameras=cams,
         )
         return obs
