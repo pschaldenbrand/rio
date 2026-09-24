@@ -21,7 +21,6 @@ classifiers = [
 dynamic = ["version", "readme"]
 requires-python = ">=3.10"
 
-#TODO: change git reference to main.
 dependencies = [
     "loguru>=0.7.3",
     "rio_hw[all] @ git+https://github.com/pschaldenbrand/rio-hw.git@main",
@@ -53,7 +52,15 @@ docs = [
 # This removes version constraints from transitive dependencies
 [tool.uv]
 # ruckig<0.19 is sdist-only and its pinned scikit-build-core no longer builds.
-override-dependencies = ["numpy", "rerun-sdk", "av<=13.1.0", "ruckig>=0.19"]
+# cmeel-urdfdom/tinyxml2: keep ABI matching libpinocchio 3.8 (Kassow IK).
+override-dependencies = [
+    "numpy",
+    "rerun-sdk",
+    "av<=13.1.0",
+    "ruckig>=0.19",
+    "cmeel-urdfdom>=4,<5",
+    "cmeel-tinyxml2==10.0.0",
+]
 
 # Local checkout, so the Kassow arm node and the _kord_bridge build tree stay in sync.
 [tool.uv.sources]
