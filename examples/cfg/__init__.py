@@ -1,4 +1,5 @@
 from .bimanual_so100 import BimanualSO100Station
+from .bimanual_ur_gello import BimanualUr5eGelloStation
 from .bimanual_yam_station import BimanualYamStation
 from .humanoid import G1Station
 from .so100 import SO100Station
@@ -9,6 +10,7 @@ from .yam_station import YamStation
 
 __all__ = [
     "BimanualSO100Station",
+    "BimanualUr5eGelloStation",
     "BimanualYamStation",
     "G1Station",
     "SO100Station",
